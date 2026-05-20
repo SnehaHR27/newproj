@@ -193,6 +193,17 @@ const Dashboard = ({ user }) => {
             <h3 className="font-bold text-lg mb-2 text-yellow-400">Interview Preparation</h3>
             <p className="text-gray-400 text-sm leading-relaxed">Browse common interview questions and ideal answers for top job roles.</p>
           </div>
+
+          <div
+            onClick={() => navigate("/tips-tricks")}
+            className="group p-6 rounded-2xl border border-orange-500/30 bg-orange-500/10 backdrop-blur transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/20 hover:scale-[1.02] cursor-pointer"
+          >
+            <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center text-2xl mb-4">
+              💡
+            </div>
+            <h3 className="font-bold text-lg mb-2 text-orange-400">Tips & Tricks</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">Master the STAR method, checklist rules, and access the pre-interview Motivation Hub.</p>
+          </div>
         </div>
 
         {/* Footer */}

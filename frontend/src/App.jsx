@@ -13,6 +13,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import Roadmap from "./pages/Roadmap";
 import Preparation from "./pages/Preparation";
+import TipsTricks from "./pages/TipsTricks";
 
 // ── Protected Route Wrapper ─────────────────────────────────────
 const ProtectedRoute = ({ user, loading, children }) => {
@@ -133,6 +134,14 @@ const App = () => {
           element={
             <ProtectedRoute user={user} loading={loading}>
               <Preparation user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tips-tricks"
+          element={
+            <ProtectedRoute user={user} loading={loading}>
+              <TipsTricks user={user} />
             </ProtectedRoute>
           }
         />

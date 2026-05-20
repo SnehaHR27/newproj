@@ -1,3 +1,11 @@
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (err) {
+  console.warn("⚠️ DNS setServers failed:", err.message);
+}
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");

@@ -115,7 +115,7 @@ const Dashboard = ({ user }) => {
           </div>
           <h2 className="text-4xl sm:text-6xl font-bold mb-4 leading-tight">
             <span className="bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-              Ace Your Next
+              Crack Your Next
             </span>
             <br />
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">

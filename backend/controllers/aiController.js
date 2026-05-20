@@ -37,6 +37,7 @@ Question asked: "${question}"
 Candidate's answer: "${answer}"
 
 Analyze both the CONTENT (what they said) and BEHAVIOR (how they communicated — clarity, structure, confidence based on text${imageBase64 ? " AND visual body language from the provided camera snapshot" : ""}).
+If the answer is incorrect, incomplete, or too simple, provide the correct technical answer and a concrete example of how to answer it properly. Be dynamic, highly interactive, and detailed.
 
 Return ONLY valid JSON in this exact format with no extra text:
 {
@@ -54,7 +55,7 @@ Return ONLY valid JSON in this exact format with no extra text:
     "<Factual or conceptual mistake to correct>",
     "<Another correction or missing key point>"
   ],
-  "idealAnswer": "<A concise model answer in 3-4 sentences>",
+  "idealAnswer": "<Provide a complete, correct technical answer for the question asked and an example of how the candidate should have answered properly. Be very detailed and informative.>",
   "encouragement": "<One short encouraging sentence>"
 }`;
 
@@ -80,7 +81,7 @@ Return ONLY valid JSON in this exact format with no extra text:
     feedback = JSON.parse(cleaned);
   } catch (aiError) {
     console.log("AI evaluation failed, using fallback:", aiError.message || aiError);
-    feedback = generateLocalFeedback(answer, !!imageBase64);
+    feedback = generateLocalFeedback(question, answer, !!imageBase64);
   }
 
   // ── Analyze filler words ──
@@ -111,7 +112,7 @@ Return ONLY valid JSON in this exact format with no extra text:
 // ══════════════════════════════════════════════════════════════════
 // LOCAL FALLBACK: When AI rate limit is exceeded
 // ══════════════════════════════════════════════════════════════════
-function generateLocalFeedback(answer, hasCamera = false) {
+function generateLocalFeedback(question, answer, hasCamera = false) {
   const wordCount = (answer || "").split(/\s+/).filter(Boolean).length;
   let fb;
 
@@ -129,7 +130,7 @@ function generateLocalFeedback(answer, hasCamera = false) {
         "Include context about the situation and your specific role",
       ],
       idealAnswer:
-        "A strong answer should include a specific example from your experience, the actions you took, and the measurable result or outcome.",
+        `For the question "${question}", a correct and ideal answer would deeply explain the concepts requested. Since this is a fallback, make sure you study the core topic of the question and practice answering it using the STAR method (Situation, Task, Action, Result). Provide specific examples from your past experience.`,
       encouragement:
         "Don't worry — practice makes perfect! Try again with more detail.",
     };
@@ -150,7 +151,7 @@ function generateLocalFeedback(answer, hasCamera = false) {
         "Quantify your impact where possible (e.g. 'reduced load time by 30%')",
       ],
       idealAnswer:
-        "Strengthen your answer by adding measurable results and linking your experience directly to the role requirements.",
+        `For the question "${question}", you are on the right track but missing depth. The right answer involves explicitly mentioning the technologies, steps taken, or the specific methodology required. An example answer structure: "In my previous role, I faced [Situation]. I decided to [Action] which resulted in [Result]."`,
       encouragement:
         "You're on the right track — just go deeper with specifics next time!",
     };
@@ -171,7 +172,7 @@ function generateLocalFeedback(answer, hasCamera = false) {
         "Explain WHY you chose a specific approach, not just WHAT you did",
       ],
       idealAnswer:
-        "A 60-90 second response that uses STAR and highlights your specific contributions and measurable outcomes.",
+        `A complete answer for "${question}" should directly address the technical requirements while maintaining a clear narrative. Example: "I utilized [Technology] to solve the problem by implementing [Solution]. This improved performance by X%." Always anchor your technical explanations with real-world business value.`,
       encouragement:
         "Strong answer! Keep polishing the structure to make it even more compelling.",
     };

@@ -138,7 +138,7 @@ const Dashboard = ({ user }) => {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             onClick={() => navigate("/practice")}
             className="group p-6 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 backdrop-blur transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20 hover:scale-[1.02] cursor-pointer"
@@ -173,14 +173,25 @@ const Dashboard = ({ user }) => {
           </div>
 
           <div
-            onClick={() => navigate("/practice")}
-            className="group p-6 rounded-2xl border border-blue-500/30 bg-gray-900/50 backdrop-blur transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02] cursor-pointer"
+            onClick={() => navigate("/roadmap")}
+            className="group p-6 rounded-2xl border border-pink-500/30 bg-pink-500/10 backdrop-blur transition-all duration-300 hover:shadow-xl hover:shadow-pink-500/20 hover:scale-[1.02] cursor-pointer"
           >
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-2xl mb-4">
-              🧠
+            <div className="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center text-2xl mb-4">
+              🗺️
             </div>
-            <h3 className="font-bold text-lg mb-2 text-blue-400">Smart Questions</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">Role-specific technical + behavioral questions tailored to your experience level.</p>
+            <h3 className="font-bold text-lg mb-2 text-pink-400">Learning Roadmaps</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">Explore structured learning paths and roadmaps for various tech domains.</p>
+          </div>
+
+          <div
+            onClick={() => navigate("/preparation")}
+            className="group p-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 backdrop-blur transition-all duration-300 hover:shadow-xl hover:shadow-yellow-500/20 hover:scale-[1.02] cursor-pointer"
+          >
+            <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center text-2xl mb-4">
+              📚
+            </div>
+            <h3 className="font-bold text-lg mb-2 text-yellow-400">Interview Preparation</h3>
+            <p className="text-gray-400 text-sm leading-relaxed">Browse common interview questions and ideal answers for top job roles.</p>
           </div>
         </div>
 

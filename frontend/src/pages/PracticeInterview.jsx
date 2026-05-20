@@ -19,7 +19,7 @@ const ROLES = [
 
 const LEVELS = ["Junior", "Mid-Level", "Senior"];
 
-const PracticeInterview = () => {
+const PracticeInterview = ({ user }) => {
   const navigate = useNavigate();
 
   // ── Interview State ──────────────────────────────────────────────
@@ -358,7 +358,7 @@ const PracticeInterview = () => {
                 ...prev,
                 { id: Date.now() + 2, sender: "tutor", text: questions[nextQ] },
               ]);
-            }, 4000);
+            }, 1000); // Reduced time to 1 second
             return;
           }
           
@@ -413,7 +413,7 @@ const PracticeInterview = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              userId: auth.currentUser?.uid,
+              userId: user?.uid || auth.currentUser?.uid,
               role,
               level,
               score: Number(finalScore.toFixed(1)),
@@ -433,7 +433,7 @@ const PracticeInterview = () => {
           }
           setWebcamOn(false);
           setPhase("results");
-        }, 6000);
+        }, 1500); // Reduced to 1.5 seconds from 6 seconds
       }
     } catch (err) {
       console.error(err);
@@ -447,6 +447,64 @@ const PracticeInterview = () => {
       ]);
     } finally {
       setIsEvaluating(false);
+    }
+  };
+
+  // ── Skip Question ────────────────────────────────────────────────
+  const handleSkip = () => {
+    if (isEvaluating) return;
+    
+    const nextQ = currentQ + 1;
+    if (nextQ < questions.length) {
+      setCurrentQ(nextQ);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now(), sender: "user", text: "[Skipped question]" },
+        { id: Date.now() + 1, sender: "tutor", text: `Skipped. Next Question: ${questions[nextQ]}` },
+      ]);
+      speakText(`Skipped. Next Question: ${questions[nextQ]}`);
+    } else {
+      // It's the last question
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now(), sender: "user", text: "[Skipped question]" },
+      ]);
+      speakText("Skipped the last question! Let me show your summary.");
+      
+      // Save Interview to Database
+      try {
+        const finalFeedback = [...allFeedback];
+        const finalScore = finalFeedback.length > 0 ? finalFeedback.reduce((sum, f) => sum + (f.score || 0), 0) / finalFeedback.length : 0;
+        
+        let overallRating = "Needs Improvement";
+        if (finalScore >= 8) overallRating = "Excellent";
+        else if (finalScore >= 6) overallRating = "Good";
+        else if (finalScore >= 4) overallRating = "Average";
+
+        fetch("http://localhost:5000/api/interviews/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user?.uid || auth.currentUser?.uid,
+            role,
+            level,
+            score: Number(finalScore.toFixed(1)),
+            rating: overallRating,
+            feedbackSummary: finalFeedback
+          })
+        }).catch(e => console.error("Failed to save DB analytics", e));
+      } catch(e) {
+        console.error("Save logic error", e);
+      }
+
+      setTimeout(() => {
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach((t) => t.stop());
+          streamRef.current = null;
+        }
+        setWebcamOn(false);
+        setPhase("results");
+      }, 1500);
     }
   };
 
@@ -528,12 +586,12 @@ const PracticeInterview = () => {
           {/* Experience Level */}
           <div className="mb-5">
             <label className="block text-[13px] font-bold text-gray-200 mb-2">Experience Level</label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {LEVELS.map((l) => (
                 <button
                   key={l}
                   onClick={() => setLevel(l)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                  className={`flex-1 min-w-[100px] py-2.5 rounded-xl text-sm font-bold transition-all ${
                     level === l
                       ? "bg-purple-200 text-black shadow-lg shadow-purple-500/20"
                       : "bg-[#1c1c1c] text-gray-400 border border-gray-700 hover:border-gray-500"
@@ -548,12 +606,12 @@ const PracticeInterview = () => {
           {/* Interview Focus */}
           <div className="mb-5">
             <label className="block text-[13px] font-bold text-gray-200 mb-2">Interview Focus</label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {["Technical", "Behavioral", "Mixed"].map((f) => (
                 <button
                   key={f}
                   onClick={() => setFocusType(f)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                  className={`flex-1 min-w-[100px] py-2.5 rounded-xl text-sm font-bold transition-all ${
                     focusType === f
                       ? "bg-purple-200 text-black shadow-lg shadow-purple-500/20"
                       : "bg-[#1c1c1c] text-gray-400 border border-gray-700 hover:border-gray-500"
@@ -685,9 +743,9 @@ const PracticeInterview = () => {
         </div>
 
         {/* Main Grid: Chat + Sidebar */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-4 h-[calc(100vh-120px)]">
+        <div className="max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-4 gap-6 lg:h-[calc(100vh-140px)] h-auto">
           {/* Chat Area — 3 columns */}
-          <div className="lg:col-span-3 flex flex-col border border-gray-800 rounded-2xl bg-gray-900/80 backdrop-blur overflow-hidden">
+          <div className="lg:col-span-3 flex flex-col border border-gray-800 rounded-2xl bg-gray-900/80 backdrop-blur overflow-hidden h-[60vh] lg:h-auto">
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
               {messages.map((m) => (
@@ -779,12 +837,21 @@ const PracticeInterview = () => {
                 >
                   Send
                 </button>
+                <button
+                  type="button"
+                  onClick={handleSkip}
+                  disabled={isEvaluating}
+                  className="bg-gray-700 hover:bg-gray-600 border border-gray-600 px-4 py-3 rounded-xl font-bold text-gray-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  title="Skip this question"
+                >
+                  Skip
+                </button>
               </form>
             </div>
           </div>
 
           {/* Sidebar — Webcam + Controls */}
-          <div className="w-64 flex-shrink-0 flex flex-col items-center gap-4 pt-2">
+          <div className="w-full lg:w-64 flex-shrink-0 flex flex-col items-center gap-4 pt-0 lg:pt-2">
             {/* Webcam */}
             <div className="relative">
               {webcamOn ? (

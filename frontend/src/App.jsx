@@ -11,6 +11,8 @@ import Signup from "./pages/Signup";
 import PracticeInterview from "./pages/PracticeInterview";
 import ResumeBuilder from "./pages/ResumeBuilder";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import Roadmap from "./pages/Roadmap";
+import Preparation from "./pages/Preparation";
 
 // ── Protected Route Wrapper ─────────────────────────────────────
 const ProtectedRoute = ({ user, loading, children }) => {
@@ -98,7 +100,7 @@ const App = () => {
           path="/practice"
           element={
             <ProtectedRoute user={user} loading={loading}>
-              <PracticeInterview />
+              <PracticeInterview user={user} />
             </ProtectedRoute>
           }
         />
@@ -115,6 +117,22 @@ const App = () => {
           element={
             <ProtectedRoute user={user} loading={loading}>
               <AnalyticsDashboard user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/roadmap"
+          element={
+            <ProtectedRoute user={user} loading={loading}>
+              <Roadmap user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/preparation"
+          element={
+            <ProtectedRoute user={user} loading={loading}>
+              <Preparation user={user} />
             </ProtectedRoute>
           }
         />

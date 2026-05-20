@@ -42,7 +42,7 @@ const ResumeBuilder = () => {
           <div className="space-y-4 no-print bg-gray-900/50 p-6 rounded-2xl border border-gray-800 backdrop-blur">
             <h2 className="text-xl font-bold text-white mb-4">Enter Details</h2>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Full Name</label>
                 <input name="name" value={formData.name} onChange={handleChange} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 mt-1 outline-none focus:border-cyan-500 transition text-sm" placeholder="John Doe" />
